@@ -38,6 +38,7 @@ interface PitStore {
   setInspector: (v: string) => void;
   setLaneState: (index: 0 | 1, state: LaneState) => void;
   resetLane: (index: 0 | 1) => void;
+  clearAllData: () => void;
 }
 
 export const usePitStore = create<PitStore>()(
@@ -78,6 +79,14 @@ export const usePitStore = create<PitStore>()(
           const next: [LaneState, LaneState] = [...s.laneStates] as [LaneState, LaneState];
           next[index] = initialLaneState();
           return { laneStates: next };
+        }),
+
+      clearAllData: () =>
+        set({
+          records: [],
+          sessionName: '',
+          inspector: '',
+          laneStates: [initialLaneState(), initialLaneState()],
         }),
     }),
     {

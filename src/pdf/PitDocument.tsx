@@ -10,16 +10,17 @@ import {
 import type { PitRecord } from '../types';
 import { buildPageGroups, formatBool } from './pdfUtils';
 
-const getFontUrl = (filename: string) => {
-  const base = import.meta.env.BASE_URL || '/';
-  const cleanBase = base.endsWith('/') ? base : `${base}/`;
+// フォントURL解決（GitHub Pagesのサブパス /pit_sagyou_kiroku/ にも対応）
+// window.location.href を基準にすることで、どの環境でも正しく解決される
+// 例: https://sakupan-syuzo.github.io/pit_sagyou_kiroku/BIZUDPGothic-Regular.ttf
+const getFontUrl = (filename: string): string => {
   if (typeof window !== 'undefined') {
-    return new URL(`${cleanBase}${filename}`, window.location.origin).href;
+    return new URL(filename, window.location.href).href;
   }
-  return `${cleanBase}${filename}`;
+  return `/${filename}`;
 };
 
-// フォント登録（GitHub Pagesなどのサブパス展開に対応）
+// フォント登録
 Font.register({
   family: 'BIZUDPGothic',
   fonts: [
@@ -109,21 +110,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-  // 列幅定義
+  // 列幅定義 (合計100%)
   colNo: { width: '4%' },
-  colPitNo: { width: '7%' },
-  colCarNo: { width: '7%' },
+  colPitNo: { width: '6%' },
+  colCarNo: { width: '6%' },
   colPitInTime: { width: '9%' },
   colPitOutTime: { width: '9%' },
-  colPitInDriver: { width: '13%' },
-  colPitOutDriver: { width: '13%' },
-  colDriverChange: { width: '9%' },
-  colRefuel: { width: '7%' },
-  colTires: { width: '7%' },
-  colOther: { width: '15%' },
-  // その他列用 長文折り返し（@react-pdf/renderer 型定義に wordBreak がないため回避）
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  breakAll: { wordBreak: 'break-all' } as any,
+  colPitInDriver: { width: '9%' },
+  colPitOutDriver: { width: '9%' },
+  colDriverChange: { width: '8%' },
+  colRefuel: { width: '6%' },
+  colTires: { width: '6%' },
+  colOther: { width: '28%' },
   // フッター
   footer: {
     position: 'absolute',
@@ -164,11 +162,11 @@ const COLUMNS = [
   { key: 'carNo', label: 'Car\nNo.', style: styles.colCarNo },
   { key: 'pitInTime', label: 'PIT IN\n時刻', style: styles.colPitInTime },
   { key: 'pitOutTime', label: 'PIT OUT\n時刻', style: styles.colPitOutTime },
-  { key: 'pitInDriver', label: 'PIT INドライバー', style: styles.colPitInDriver },
-  { key: 'pitOutDriver', label: 'PIT OUTドライバー', style: styles.colPitOutDriver },
-  { key: 'driverChange', label: 'ドライバー\n交代', style: styles.colDriverChange },
+  { key: 'pitInDriver', label: 'IN Dr.', style: styles.colPitInDriver },
+  { key: 'pitOutDriver', label: 'OUT Dr.', style: styles.colPitOutDriver },
+  { key: 'driverChange', label: '交代', style: styles.colDriverChange },
   { key: 'refuel', label: '給油', style: styles.colRefuel },
-  { key: 'tires', label: 'タイヤ\n(本)', style: styles.colTires },
+  { key: 'tires', label: 'タイヤ', style: styles.colTires },
   { key: 'other', label: 'その他作業', style: styles.colOther },
 ];
 
@@ -284,11 +282,13 @@ const PitDocument: React.FC<PitDocumentProps> = ({ records, sessionName, inspect
                   <View style={[styles.cell, styles.colTires]}>
                     <Text style={styles.cellText}>{record.tires}</Text>
                   </View>
-                  {/* その他（break-all相当） */}
-                  <View style={[styles.cell, styles.colOther]}>
-                    <Text style={[styles.cellText, styles.breakAll]}>
-                      {record.other}
-                    </Text>
+                  {/* その他 */}
+                  <View style={[styles.cell, styles.colOther, { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start' }]}>
+                    {Array.from(record.other || '').map((char, i) => (
+                      <Text key={i} style={styles.cellText}>
+                        {char}
+                      </Text>
+                    ))}
                   </View>
                 </View>
               );

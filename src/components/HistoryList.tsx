@@ -33,13 +33,13 @@ const HistoryList: React.FC<HistoryListProps> = ({ onEditRecord }) => {
         >
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              {/* 上段: Car No. / PIT No. */}
+              {/* 上段: PIT No. / Car No. */}
               <div className="flex items-center gap-2 mb-1">
+                <span className="bg-indigo-600 text-white text-xs font-bold rounded px-2 py-0.5">
+                  PIT {record.pitNo}
+                </span>
                 <span className="bg-gray-800 text-white text-xs font-bold rounded px-2 py-0.5">
                   Car {record.carNo}
-                </span>
-                <span className="bg-gray-200 text-gray-700 text-xs rounded px-2 py-0.5">
-                  PIT {record.pitNo}
                 </span>
                 {!record.pitOutTime && (
                   <span className="bg-amber-100 text-amber-700 text-xs rounded px-2 py-0.5 font-bold">

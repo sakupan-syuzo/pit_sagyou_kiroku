@@ -77,7 +77,7 @@ const EditModal: React.FC<EditModalProps> = ({ record, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+      className="fixed inset-0 bg-black/50 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl max-h-[92dvh] overflow-y-auto shadow-2xl">
@@ -218,26 +218,30 @@ const EditModal: React.FC<EditModalProps> = ({ record, onClose }) => {
           </div>
         </div>
 
-        {/* フッターボタン */}
-        <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 py-3 flex gap-2">
+        {/* フッターボタン — 2行レイアウトでスマホでも全ボタン表示 */}
+        <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 pt-3 pb-4 space-y-2">
+          {/* 1行目: キャンセル / 保存 */}
+          <div className="flex gap-2">
+            <button
+              onClick={onClose}
+              className="flex-1 py-3 text-sm font-bold text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            >
+              キャンセル
+            </button>
+            <button
+              onClick={handleSave}
+              className="flex-1 py-3 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 active:bg-blue-800 transition-colors"
+            >
+              保存
+            </button>
+          </div>
+          {/* 2行目: 削除（全幅・目立つが控えめな赤） */}
           <button
             onClick={handleDelete}
-            className="flex items-center gap-1 px-3 py-2.5 text-sm font-bold text-red-500 border border-red-200 rounded-xl hover:bg-red-50 transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 py-2.5 text-sm font-bold text-red-500 border border-red-200 rounded-xl hover:bg-red-50 active:bg-red-100 transition-colors"
           >
-            <Trash2 size={16} />
-            削除
-          </button>
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 text-sm font-bold text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-          >
-            キャンセル
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex-1 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors"
-          >
-            保存
+            <Trash2 size={15} />
+            このレコードを削除
           </button>
         </div>
       </div>
