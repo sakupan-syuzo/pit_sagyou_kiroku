@@ -4,12 +4,26 @@ import DriverSelector from '../DriverSelector';
 
 interface StandbyFormProps {
   onPitIn: (draft: Pick<LaneDraft, 'pitNo' | 'carNo' | 'pitInDriver'>) => void;
+  /** 連続記録モードで引き継がれる初期値 */
+  initialPitNo?: string;
+  initialCarNo?: string;
+  initialDriver?: string;
 }
 
-const StandbyForm: React.FC<StandbyFormProps> = ({ onPitIn }) => {
-  const [pitNo, setPitNo] = React.useState('');
-  const [carNo, setCarNo] = React.useState('');
-  const [pitInDriver, setPitInDriver] = React.useState('');
+const StandbyForm: React.FC<StandbyFormProps> = ({
+  onPitIn,
+  initialPitNo = '',
+  initialCarNo = '',
+  initialDriver = '',
+}) => {
+  const [pitNo, setPitNo] = React.useState(initialPitNo);
+  const [carNo, setCarNo] = React.useState(initialCarNo);
+  const [pitInDriver, setPitInDriver] = React.useState(initialDriver);
+
+  // 連続モードで initialXxx が変わった場合（PIT OUT後の引き継ぎ）に同期する
+  React.useEffect(() => { setPitNo(initialPitNo); }, [initialPitNo]);
+  React.useEffect(() => { setCarNo(initialCarNo); }, [initialCarNo]);
+  React.useEffect(() => { setPitInDriver(initialDriver); }, [initialDriver]);
 
   const handlePitIn = () => {
     if (!pitNo.trim() || !carNo.trim() || !pitInDriver.trim()) {

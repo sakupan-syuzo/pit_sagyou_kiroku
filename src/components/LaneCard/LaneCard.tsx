@@ -31,9 +31,15 @@ const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
   const setLaneState = usePitStore((s) => s.setLaneState);
   const resetLane = usePitStore((s) => s.resetLane);
 
-  const { status, draft } = laneState;
+  const { status, draft, continuousMode } = laneState;
+
+  const handleToggleContinuous = () => {
+    // 部分マージなので continuousMode だけ更新、status/draft は維持される
+    setLaneState(laneIndex, { continuousMode: !continuousMode });
+  };
 
   const handlePitIn = (fields: Pick<LaneDraft, 'pitNo' | 'carNo' | 'pitInDriver'>) => {
+    // 部分マージで status と draft だけ更新（continuousMode は維持）
     setLaneState(laneIndex, {
       status: 'working',
       draft: {
@@ -52,14 +58,15 @@ const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
   };
 
   const handleDraftChange = (patch: Partial<LaneDraft>) => {
+    // 部分マージで draft だけ更新（continuousMode は維持）
     setLaneState(laneIndex, {
-      status: 'working',
       draft: { ...draft, ...patch },
     });
   };
 
   const handleCancel = () => {
     if (!window.confirm('作業データを破棄して待機中に戻りますか？')) return;
+    // resetLane は continuousMode を温存したままリセット
     resetLane(laneIndex);
   };
 
@@ -80,10 +87,13 @@ const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
       other: draft.other,
     };
     addRecord(record);
+    // 引き継ぎは連続モードに関わらず通常リセット（continuousMode は温存）
     resetLane(laneIndex);
   };
 
   const handlePitOut = () => {
+    const nextDriver = draft.isDriverChanged ? draft.pitOutDriver : draft.pitInDriver;
+
     const record: PitRecord = {
       id: uuidv4(),
       createdAt: draft.createdAt,
@@ -91,7 +101,7 @@ const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
       pitNo: draft.pitNo,
       pitInDriver: draft.pitInDriver,
       isDriverChanged: draft.isDriverChanged,
-      pitOutDriver: draft.isDriverChanged ? draft.pitOutDriver : draft.pitInDriver,
+      pitOutDriver: nextDriver,
       pitInTime: draft.pitInTime,
       pitOutTime: getNowTime(),
       refuel: draft.refuel,
@@ -99,20 +109,68 @@ const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
       other: draft.other,
     };
     addRecord(record);
-    resetLane(laneIndex);
+
+    if (continuousMode) {
+      // 連続モード: pitNo / carNo / 次ドライバーを保持し、その他はクリア
+      setLaneState(laneIndex, {
+        status: 'standby',
+        draft: {
+          pitNo: draft.pitNo,
+          carNo: draft.carNo,
+          pitInDriver: nextDriver,
+          isDriverChanged: false,
+          pitOutDriver: '',
+          pitInTime: '',
+          pitOutTime: '',
+          refuel: false,
+          tires: 0,
+          other: '',
+          createdAt: 0,
+        } as LaneDraft,
+        // continuousMode は部分マージなので指定不要（維持される）
+      });
+    } else {
+      // 通常モード: 全クリア（continuousMode は温存）
+      resetLane(laneIndex);
+    }
   };
 
   return (
     <div className={`bg-white rounded-2xl shadow-md border ${LANE_BORDER[laneIndex]} overflow-hidden`}>
       {/* ヘッダー */}
-      <div className={`bg-gradient-to-r ${LANE_COLORS[laneIndex]} text-white px-4 py-2.5 flex items-center justify-between`}>
-        <span className="font-bold text-sm tracking-wide">{LANE_LABELS[laneIndex]}</span>
+      <div className={`bg-gradient-to-r ${LANE_COLORS[laneIndex]} text-white px-4 py-2.5 flex items-center justify-between gap-2`}>
+        <span className="font-bold text-sm tracking-wide shrink-0">{LANE_LABELS[laneIndex]}</span>
+
+        {/* 連続記録モード トグル（常時表示） */}
+        <button
+          type="button"
+          onClick={handleToggleContinuous}
+          className="flex items-center gap-1.5 shrink-0"
+          title={continuousMode ? '連続記録モード ON（タップでOFF）' : '連続記録モード OFF（タップでON）'}
+        >
+          <span className="text-xs text-white/80 font-bold">🔄 連続</span>
+          <span
+            className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+              continuousMode ? 'bg-white/70' : 'bg-white/20'
+            }`}
+          >
+            <span
+              className={`inline-block h-3.5 w-3.5 transform rounded-full transition-transform shadow ${
+                continuousMode
+                  ? 'translate-x-4 bg-blue-600'
+                  : 'translate-x-1 bg-white/60'
+              }`}
+            />
+          </span>
+        </button>
+
+        {/* ステータスバッジ */}
         {status === 'working' ? (
-          <span className="text-xs bg-white/20 rounded-full px-2 py-0.5 font-bold">
+          <span className="text-xs bg-white/20 rounded-full px-2 py-0.5 font-bold shrink-0">
             🔴 作業中 — Car {draft.carNo}
           </span>
         ) : (
-          <span className="text-xs bg-white/20 rounded-full px-2 py-0.5">
+          <span className="text-xs bg-white/20 rounded-full px-2 py-0.5 shrink-0">
             ⚪ 待機中
           </span>
         )}
@@ -121,7 +179,12 @@ const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
       {/* ボディ */}
       <div className={`p-4 ${status === 'working' ? LANE_STATUS_BG[laneIndex] : ''}`}>
         {status === 'standby' ? (
-          <StandbyForm onPitIn={handlePitIn} />
+          <StandbyForm
+            onPitIn={handlePitIn}
+            initialPitNo={draft.pitNo}
+            initialCarNo={draft.carNo}
+            initialDriver={draft.pitInDriver}
+          />
         ) : (
           <WorkingForm
             draft={draft}
