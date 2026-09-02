@@ -36,7 +36,7 @@ const PdfPage: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-600 mb-1">担当技術委員</label>
+          <label className="block text-xs font-bold text-gray-600 mb-1">担当審判員</label>
           <input
             type="text"
             value={inspector}

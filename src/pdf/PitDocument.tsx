@@ -302,7 +302,7 @@ const PitDocument: React.FC<PitDocumentProps> = ({ records, sessionName, inspect
               value={sessionName}
             />
             <FooterLine
-              label="担当技術委員"
+              label="担当審判員"
               value={inspector}
             />
           </View>
