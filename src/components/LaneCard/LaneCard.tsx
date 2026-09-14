@@ -6,7 +6,7 @@ import StandbyForm from './StandbyForm';
 import WorkingForm from './WorkingForm';
 
 interface LaneCardProps {
-  laneIndex: 0 | 1;
+  laneIndex: number;
 }
 
 const getNowTime = (): string => {
@@ -17,13 +17,28 @@ const getNowTime = (): string => {
   return `${hh}:${mm}:${ss}`;
 };
 
-const LANE_LABELS = ['監視レーン 1', '監視レーン 2'];
+const LANE_LABELS = ['監視レーン 1', '監視レーン 2', '監視レーン 3', '監視レーン 4', '監視レーン 5'];
 const LANE_COLORS = [
   'from-blue-600 to-blue-500',
   'from-purple-600 to-purple-500',
+  'from-emerald-600 to-emerald-500',
+  'from-orange-500 to-orange-400',
+  'from-rose-600 to-rose-500',
 ];
-const LANE_BORDER = ['border-blue-200', 'border-purple-200'];
-const LANE_STATUS_BG = ['bg-blue-50', 'bg-purple-50'];
+const LANE_BORDER = [
+  'border-blue-200',
+  'border-purple-200',
+  'border-emerald-200',
+  'border-orange-200',
+  'border-rose-200',
+];
+const LANE_STATUS_BG = [
+  'bg-blue-50',
+  'bg-purple-50',
+  'bg-emerald-50',
+  'bg-orange-50',
+  'bg-rose-50',
+];
 
 const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {
   const addRecord = usePitStore((s) => s.addRecord);

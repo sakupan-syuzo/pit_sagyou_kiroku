@@ -1,7 +1,7 @@
 import React from 'react';
 import { PenLine } from 'lucide-react';
 
-const DRIVER_LABELS = ['A', 'B', 'C', 'D'] as const;
+const DRIVER_LABELS = ['A', 'B', 'C', 'D', 'E', 'F'] as const;
 export type DriverLabel = (typeof DRIVER_LABELS)[number];
 
 interface DriverSelectorProps {
@@ -47,8 +47,8 @@ const DriverSelector: React.FC<DriverSelectorProps> = ({
 
   return (
     <div className="space-y-1.5">
-      {/* プリセットボタン行 */}
-      <div className="flex gap-1 items-center">
+      {/* プリセットボタン行（A〜F + 入力トグル） */}
+      <div className="flex gap-0.5 items-center">
         {DRIVER_LABELS.map((label) => {
           const isExcluded = excludeLabels.includes(label);
           const isSelected = value === label && !inputMode;
@@ -59,7 +59,7 @@ const DriverSelector: React.FC<DriverSelectorProps> = ({
               disabled={isExcluded}
               onClick={() => !isExcluded && handlePreset(label)}
               title={isExcluded ? `${label}: PIT INで使用中` : undefined}
-              className={`flex-1 py-2 rounded-lg text-sm font-bold border transition-colors ${
+              className={`flex-1 py-1.5 rounded-md text-xs font-bold border transition-colors ${
                 isExcluded
                   ? 'bg-gray-100 text-gray-300 border-gray-200 cursor-not-allowed line-through'
                   : isSelected
@@ -72,11 +72,11 @@ const DriverSelector: React.FC<DriverSelectorProps> = ({
           );
         })}
 
-        {/* 入力モード切替ボタン */}
+        {/* 入力モード切替ボタン（アイコンのみでコンパクトに） */}
         <button
           type="button"
           onClick={handleToggleInput}
-          className={`flex items-center gap-1 px-2.5 py-2 rounded-lg text-xs font-bold border transition-colors ${
+          className={`flex items-center justify-center px-2 py-1.5 rounded-md border transition-colors shrink-0 ${
             inputMode
               ? 'bg-indigo-600 text-white border-indigo-600'
               : 'bg-white text-gray-500 border-gray-300 hover:bg-gray-50'
@@ -84,7 +84,6 @@ const DriverSelector: React.FC<DriverSelectorProps> = ({
           title="テキスト入力に切り替え"
         >
           <PenLine size={13} />
-          入力
         </button>
       </div>
 

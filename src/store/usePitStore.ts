@@ -5,7 +5,7 @@ import type { PitRecord, LaneDraft, LaneStatus } from '../types';
 export type LaneState = {
   status: LaneStatus;
   draft: LaneDraft;
-  continuousMode: boolean; // 連続記録モード
+  continuousMode: boolean;
 };
 
 const initialLaneDraft = (): LaneDraft => ({
@@ -31,17 +31,19 @@ interface PitStore {
   records: PitRecord[];
   sessionName: string;
   inspector: string;
-  laneStates: [LaneState, LaneState];
+  laneCount: number;        // 1〜5
+  laneStates: LaneState[];  // 可変長（最大5）
 
   addRecord: (record: PitRecord) => void;
   updateRecord: (id: string, patch: Partial<PitRecord>) => void;
   deleteRecord: (id: string) => void;
   setSessionName: (v: string) => void;
   setInspector: (v: string) => void;
-  // 部分マージ方式: 指定しなかったプロパティ（continuousMode 等）は保持される
-  setLaneState: (index: 0 | 1, partial: Partial<LaneState>) => void;
-  // continuousMode を温存したままstatus/draftのみ初期化
-  resetLane: (index: 0 | 1) => void;
+  setLaneCount: (count: number) => void;
+  // 部分マージ方式
+  setLaneState: (index: number, partial: Partial<LaneState>) => void;
+  // continuousMode を温存したまま status/draft のみ初期化
+  resetLane: (index: number) => void;
   clearAllData: () => void;
 }
 
@@ -51,6 +53,7 @@ export const usePitStore = create<PitStore>()(
       records: [],
       sessionName: '',
       inspector: '',
+      laneCount: 2,
       laneStates: [initialLaneState(), initialLaneState()],
 
       addRecord: (record) =>
@@ -71,18 +74,31 @@ export const usePitStore = create<PitStore>()(
       setSessionName: (v) => set({ sessionName: v }),
       setInspector: (v) => set({ inspector: v }),
 
-      // 部分マージ: continuousMode など指定しなかったキーは既存値を維持
+      setLaneCount: (count) =>
+        set((s) => {
+          const current = s.laneStates;
+          // 増やす場合: 新しいレーンを追加
+          if (count > current.length) {
+            const added = Array.from(
+              { length: count - current.length },
+              () => initialLaneState()
+            );
+            return { laneCount: count, laneStates: [...current, ...added] };
+          }
+          // 減らす場合: 末尾を切り捨て（呼び出し元で確認済み）
+          return { laneCount: count, laneStates: current.slice(0, count) };
+        }),
+
       setLaneState: (index, partial) =>
         set((s) => {
-          const next: [LaneState, LaneState] = [...s.laneStates] as [LaneState, LaneState];
+          const next = [...s.laneStates];
           next[index] = { ...next[index], ...partial };
           return { laneStates: next };
         }),
 
-      // continuousMode を維持したまま status/draft のみリセット
       resetLane: (index) =>
         set((s) => {
-          const next: [LaneState, LaneState] = [...s.laneStates] as [LaneState, LaneState];
+          const next = [...s.laneStates];
           next[index] = {
             ...initialLaneState(),
             continuousMode: s.laneStates[index].continuousMode,
@@ -91,12 +107,12 @@ export const usePitStore = create<PitStore>()(
         }),
 
       clearAllData: () =>
-        set({
+        set((s) => ({
           records: [],
           sessionName: '',
           inspector: '',
-          laneStates: [initialLaneState(), initialLaneState()],
-        }),
+          laneStates: Array.from({ length: s.laneCount }, () => initialLaneState()),
+        })),
     }),
     {
       name: 'pit-records-storage',

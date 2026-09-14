@@ -63,11 +63,10 @@ const HistoryList: React.FC<HistoryListProps> = ({ onEditRecord }) => {
               {/* ドライバー */}
               <div className="text-xs text-gray-600 mb-1">
                 <span className="font-bold">IN:</span> {record.pitInDriver}
-                {record.isDriverChanged && (
-                  <span className="ml-2">
-                    → <span className="font-bold">OUT:</span> {record.pitOutDriver}
-                  </span>
-                )}
+                <span className="ml-2">
+                  → <span className="font-bold">OUT:</span>{' '}
+                  {record.isDriverChanged ? record.pitOutDriver : record.pitInDriver}
+                </span>
               </div>
 
               {/* サマリー行 */}

@@ -61,31 +61,34 @@ const WorkingForm: React.FC<WorkingFormProps> = ({
   onPitOut,
 }) => {
   return (
-    <div className="space-y-3 relative">
-      {/* 取り消しボタン（右上） */}
-      <div className="flex justify-between items-start">
-        <div className="flex gap-2">
-          <div className="bg-gray-100 rounded-lg px-3 py-1 text-xs text-gray-600">
-            <span className="font-bold">PIT</span> {draft.pitNo}
+    <div className="space-y-3">
+      {/* 上段: 3ブロック大表示 + 取り消しボタン */}
+      <div className="flex items-start gap-2">
+        {/* PIT / CAR / PIT IN Dr. の3ブロック */}
+        <div className="flex gap-2 flex-1 min-w-0">
+          {/* PIT番号 */}
+          <div className="bg-gray-100 rounded-xl px-3 py-2 text-center shrink-0">
+            <div className="text-xs font-bold text-gray-500 leading-tight">PIT</div>
+            <div className="text-xl font-bold text-gray-800 leading-tight">{draft.pitNo}</div>
           </div>
-          <div className="bg-gray-100 rounded-lg px-3 py-1 text-xs text-gray-600">
-            <span className="font-bold">Car</span> {draft.carNo}
+          {/* CAR番号 */}
+          <div className="bg-gray-100 rounded-xl px-3 py-2 text-center shrink-0">
+            <div className="text-xs font-bold text-gray-500 leading-tight">CAR</div>
+            <div className="text-xl font-bold text-gray-800 leading-tight">{draft.carNo}</div>
+          </div>
+          {/* PIT IN Dr. */}
+          <div className="bg-gray-100 rounded-xl px-3 py-2 text-center flex-1 min-w-0">
+            <div className="text-xs font-bold text-gray-500 leading-tight">PIT IN Dr.</div>
+            <div className="text-xl font-bold text-gray-800 leading-tight truncate">{draft.pitInDriver}</div>
           </div>
         </div>
+        {/* 取り消しボタン */}
         <button
           onClick={onCancel}
-          className="text-xs text-red-500 border border-red-300 rounded-lg px-2 py-1 font-bold hover:bg-red-50 active:bg-red-100 transition-colors"
+          className="text-xs text-red-500 border border-red-300 rounded-lg px-2 py-1 font-bold hover:bg-red-50 active:bg-red-100 transition-colors shrink-0 mt-1"
         >
           取り消し
         </button>
-      </div>
-
-      {/* PIT INドライバー (Read-only) */}
-      <div>
-        <label className="block text-xs font-bold text-gray-600 mb-1">PIT INドライバー</label>
-        <div className="bg-gray-100 rounded-lg px-3 py-2 text-sm text-gray-700 font-bold">
-          {draft.pitInDriver}
-        </div>
       </div>
 
       {/* PIT IN時刻 (Read-only) */}
