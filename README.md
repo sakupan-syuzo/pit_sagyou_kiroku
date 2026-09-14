@@ -1,32 +1,58 @@
-# React + TypeScript + Vite
+# ピット作業記録アプリ (Pit Work Recorder)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+モータースポーツにおけるピット作業の履歴を、スマートフォンから簡単に記録・管理・PDF出力できるモバイルファーストのPWAアプリです。
 
-Currently, two official plugins are available:
+クラウドなどのバックエンドを必要とせず、各ユーザーのスマートフォン上で完結するスタンドアロンアプリとして動作します。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 主な機能
 
-## React Compiler
+- **マルチレーン管理**: 1〜5レーンまでのピット作業を同時に監視・記録可能。
+- **直感的な状態遷移**: 「待機中」と「作業中」の2つの状態を切り替えながら、PIT IN / PIT OUT の時間と作業内容をスムーズに記録。
+- **連続記録モード**: ピットに張り付くスタッフ向けに、PIT OUT後も「PIT番号」「Car番号」「次のドライバー」を維持したまま次の作業に備える機能。
+- **ドライバー選択**: プリセット（A〜F）による素早い入力と、自由入力をシームレスに切り替え可能。
+- **作業履歴の管理**: 記録した履歴はリスト化され、タップすることで修正や削除が可能。
+- **PDFレポート出力**: 記録したデータを車両番号ごとにグループ化し、見やすい一覧表としてPDF形式で出力（セッション名や担当審判員の印字に対応）。
+- **オフライン対応 (PWA)**: PWAとしてインストール可能で、電波状況の悪いサーキットでも安定して動作。
+- **データ永続化**: 入力途中のデータや作業履歴は端末のローカルストレージに自動保存され、リロードしても消えません。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ 技術スタック
 
-## Expanding the Oxlint configuration
+- **フレームワーク**: React 19 / TypeScript / Vite
+- **スタイリング**: Tailwind CSS v4
+- **状態管理**: Zustand (localStorage による `persist` 機能を利用)
+- **アイコン**: Lucide React
+- **PDF生成**: @react-pdf/renderer
+- **PWA化**: vite-plugin-pwa
+- **フォント**: BIZ UDPGothic (UI表示およびPDF印字用)
+- **ホスティング**: GitHub Pages
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## 📦 開発環境のセットアップ
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+Node.js (推奨 v18以上) がインストールされている環境で、以下のコマンドを実行します。
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/sakupan-syuzo/pit_sagyou_kiroku.git
+cd pit_sagyou_kiroku
+
+# パッケージのインストール
+npm install
+
+# 開発サーバーの起動 (デフォルト: http://localhost:5173)
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 🚀 ビルドとデプロイ
+
+このアプリは GitHub Pages にデプロイされるよう設定されています。
+
+```bash
+# GitHub Pages へのデプロイ
+npm run deploy
+```
+
+※ `npm run deploy` を実行すると、内部で `npm run build` が実行され、成果物が `gh-pages` ブランチにプッシュされます。
+
+## 📝 今後の展望
+
+- 将来的には Firebase 等を導入し、複数端末間でのリアルタイムなデータ同期機能の実装を視野に入れています。
