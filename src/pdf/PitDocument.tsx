@@ -8,7 +8,7 @@ import {
   Font,
 } from '@react-pdf/renderer';
 import type { PitRecord } from '../types';
-import { buildPageGroups, formatBool } from './pdfUtils';
+import { buildPageGroups, formatBool, calcDuration } from './pdfUtils';
 
 // フォントURL解決（GitHub Pagesのサブパス /pit_sagyou_kiroku/ にも対応）
 // window.location.href を基準にすることで、どの環境でも正しく解決される
@@ -112,13 +112,14 @@ const styles = StyleSheet.create({
   },
   // 列幅定義 (合計100%)
   colNo: { width: '4%' },
-  colPitNo: { width: '6%' },
-  colCarNo: { width: '6%' },
+  colPitNo: { width: '5%' },
+  colCarNo: { width: '5%' },
   colPitInTime: { width: '9%' },
   colPitOutTime: { width: '9%' },
-  colPitInDriver: { width: '9%' },
-  colPitOutDriver: { width: '9%' },
-  colDriverChange: { width: '8%' },
+  colDuration: { width: '8%' },
+  colPitInDriver: { width: '7%' },
+  colPitOutDriver: { width: '7%' },
+  colDriverChange: { width: '6%' },
   colRefuel: { width: '6%' },
   colTires: { width: '6%' },
   colOther: { width: '28%' },
@@ -162,6 +163,7 @@ const COLUMNS = [
   { key: 'carNo', label: 'Car\nNo.', style: styles.colCarNo },
   { key: 'pitInTime', label: 'PIT IN\n時刻', style: styles.colPitInTime },
   { key: 'pitOutTime', label: 'PIT OUT\n時刻', style: styles.colPitOutTime },
+  { key: 'duration', label: '滞在\n時間', style: styles.colDuration },
   { key: 'pitInDriver', label: 'IN Dr.', style: styles.colPitInDriver },
   { key: 'pitOutDriver', label: 'OUT Dr.', style: styles.colPitOutDriver },
   { key: 'driverChange', label: '交代', style: styles.colDriverChange },
@@ -259,6 +261,10 @@ const PitDocument: React.FC<PitDocumentProps> = ({ records, sessionName, inspect
                   {/* PIT OUT時刻 */}
                   <View style={[styles.cell, styles.colPitOutTime]}>
                     <Text style={styles.cellText}>{record.pitOutTime || ''}</Text>
+                  </View>
+                  {/* 滞在時間 */}
+                  <View style={[styles.cell, styles.colDuration]}>
+                    <Text style={styles.cellText}>{calcDuration(record.pitInTime, record.pitOutTime)}</Text>
                   </View>
                   {/* PIT INドライバー */}
                   <View style={[styles.cell, styles.colPitInDriver]}>
