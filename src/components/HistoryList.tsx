@@ -2,6 +2,7 @@ import React from 'react';
 import { ChevronRight } from 'lucide-react';
 import { usePitStore } from '../store/usePitStore';
 import type { PitRecord } from '../types';
+import { calcDuration } from '../pdf/pdfUtils';
 
 interface HistoryListProps {
   onEditRecord: (record: PitRecord) => void;
@@ -49,14 +50,17 @@ const HistoryList: React.FC<HistoryListProps> = ({ onEditRecord }) => {
               </div>
 
               {/* 時刻 */}
-              <div className="text-xs text-gray-500 font-mono mb-1.5">
-                IN: <span className="text-gray-800 font-bold">{record.pitInTime}</span>
+              <div className="text-xs text-gray-500 font-mono mb-1.5 flex items-center">
+                <span>IN: <span className="text-gray-800 font-bold">{record.pitInTime}</span></span>
                 {record.pitOutTime ? (
                   <>
-                    {'　'}OUT: <span className="text-gray-800 font-bold">{record.pitOutTime}</span>
+                    <span className="ml-3">OUT: <span className="text-gray-800 font-bold">{record.pitOutTime}</span></span>
+                    <span className="ml-3 text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                      滞在: {calcDuration(record.pitInTime, record.pitOutTime)}
+                    </span>
                   </>
                 ) : (
-                  <span className="ml-2 text-amber-600">OUT: —</span>
+                  <span className="ml-3 text-amber-600">OUT: —</span>
                 )}
               </div>
 
