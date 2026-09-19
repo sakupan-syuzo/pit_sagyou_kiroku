@@ -29,7 +29,7 @@ const TabNav: React.FC<TabNavProps> = ({ activeTab, onTabChange }) => {
         }`}
       >
         <FileText size={20} />
-        <span>PDF出力</span>
+        <span>OUTPUT</span>
       </button>
     </nav>
   );
