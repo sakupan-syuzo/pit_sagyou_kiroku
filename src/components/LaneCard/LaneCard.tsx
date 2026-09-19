@@ -17,13 +17,18 @@ const getNowTime = (): string => {
   return `${hh}:${mm}:${ss}`;
 };
 
-const LANE_LABELS = ['監視レーン 1', '監視レーン 2', '監視レーン 3', '監視レーン 4', '監視レーン 5'];
+const LANE_LABELS = ['監視レーン 1', '監視レーン 2', '監視レーン 3', '監視レーン 4', '監視レーン 5', '監視レーン 6', '監視レーン 7', '監視レーン 8', '監視レーン 9', '監視レーン 10'];
 const LANE_COLORS = [
   'from-blue-600 to-blue-500',
   'from-purple-600 to-purple-500',
   'from-emerald-600 to-emerald-500',
   'from-orange-500 to-orange-400',
   'from-rose-600 to-rose-500',
+  'from-cyan-600 to-cyan-500',
+  'from-yellow-500 to-yellow-400',
+  'from-teal-600 to-teal-500',
+  'from-pink-600 to-pink-500',
+  'from-indigo-600 to-indigo-500',
 ];
 const LANE_BORDER = [
   'border-blue-200',
@@ -31,6 +36,11 @@ const LANE_BORDER = [
   'border-emerald-200',
   'border-orange-200',
   'border-rose-200',
+  'border-cyan-200',
+  'border-yellow-200',
+  'border-teal-200',
+  'border-pink-200',
+  'border-indigo-200',
 ];
 const LANE_STATUS_BG = [
   'bg-blue-50',
@@ -38,6 +48,11 @@ const LANE_STATUS_BG = [
   'bg-emerald-50',
   'bg-orange-50',
   'bg-rose-50',
+  'bg-cyan-50',
+  'bg-yellow-50',
+  'bg-teal-50',
+  'bg-pink-50',
+  'bg-indigo-50',
 ];
 
 const LaneCard: React.FC<LaneCardProps> = ({ laneIndex }) => {

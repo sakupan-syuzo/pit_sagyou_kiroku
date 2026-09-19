@@ -31,8 +31,8 @@ interface PitStore {
   records: PitRecord[];
   sessionName: string;
   inspector: string;
-  laneCount: number;        // 1〜5
-  laneStates: LaneState[];  // 可変長（最大5）
+  laneCount: number;        // 1〜10
+  laneStates: LaneState[];  // 可変長（最大10）
 
   addRecord: (record: PitRecord) => void;
   updateRecord: (id: string, patch: Partial<PitRecord>) => void;

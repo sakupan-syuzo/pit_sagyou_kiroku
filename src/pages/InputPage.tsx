@@ -12,6 +12,7 @@ const InputPage: React.FC = () => {
   const laneCount = usePitStore((s) => s.laneCount);
   const laneStates = usePitStore((s) => s.laneStates);
   const setLaneCount = usePitStore((s) => s.setLaneCount);
+  const hasNoCarNo = usePitStore((s) => s.records.some((r) => !r.carNo));
 
   const handleClearAll = () => {
     if (window.confirm('本当にすべての入力情報と履歴をクリアしますか？\n（次のイベントを始める前に使用します）')) {
@@ -57,7 +58,7 @@ const InputPage: React.FC = () => {
             onChange={handleLaneCountChange}
             className="border border-gray-300 rounded-lg text-sm px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            {[1, 2, 3, 4, 5].map((n) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}
           </select>
@@ -80,7 +81,12 @@ const InputPage: React.FC = () => {
 
       {/* 履歴 */}
       <div>
-        <h2 className="text-sm font-bold text-gray-600 mb-2 px-1">📋 作業履歴（タップで修正）</h2>
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <h2 className="text-sm font-bold text-gray-600">📋 作業履歴（タップで編集）</h2>
+          {hasNoCarNo && (
+            <span className="text-xs text-red-500">赤枠：Car No.未入力</span>
+          )}
+        </div>
         <HistoryList onEditRecord={setEditingRecord} />
       </div>
 
