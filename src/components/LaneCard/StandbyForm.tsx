@@ -26,10 +26,6 @@ const StandbyForm: React.FC<StandbyFormProps> = ({
   React.useEffect(() => { setPitInDriver(initialDriver); }, [initialDriver]);
 
   const handlePitIn = () => {
-    if (!pitNo.trim() || !carNo.trim() || !pitInDriver.trim()) {
-      alert('PIT No. / Car No. / PIT INドライバーをすべて入力してください');
-      return;
-    }
     onPitIn({ pitNo: pitNo.trim(), carNo: carNo.trim(), pitInDriver: pitInDriver.trim() });
   };
 

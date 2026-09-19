@@ -30,7 +30,9 @@ const HistoryList: React.FC<HistoryListProps> = ({ onEditRecord }) => {
         <button
           key={record.id}
           onClick={() => onEditRecord(record)}
-          className="w-full bg-white rounded-xl border border-gray-200 p-3 text-left shadow-sm hover:shadow-md active:bg-gray-50 transition-all"
+          className={`w-full bg-white rounded-xl border p-3 text-left shadow-sm hover:shadow-md active:bg-gray-50 transition-all ${
+            !record.carNo ? 'border-2 border-red-400' : 'border border-gray-200'
+          }`}
         >
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
